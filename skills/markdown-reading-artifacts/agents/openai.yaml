@@ -1,0 +1,4 @@
+interface:
+  display_name: "Markdown Reading Artifacts"
+  short_description: "Render Markdown as self-contained reading pages"
+  default_prompt: "Use $markdown-reading-artifacts to render this Markdown document as a self-contained HTML reading page and validate it against the source."

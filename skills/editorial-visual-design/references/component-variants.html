@@ -1,0 +1,878 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Editorial Visual System - Component Variant Matrix</title>
+<style>
+  :root {
+    --black: #0f0f0f;
+    --charcoal: #151515;
+    --panel: #1b1b1a;
+    --panel-2: #22211f;
+    --line: rgba(255,255,255,0.08);
+    --line-strong: rgba(255,255,255,0.16);
+    --text: #ece9e2;
+    --muted: #a4a09a;
+    --dim: #706d68;
+    --brass: #b8a27d;
+    --brass-hi: #d3c09a;
+    --paper: #d7cfbf;
+    --paper-ink: #1e1b17;
+    --moss: #7d8b66;
+    --blue: #6c8198;
+    --oxide: #8f6654;
+    --wine: #8a514f;
+
+    --font-display: "Avenir Next", "Helvetica Neue", "Segoe UI", sans-serif;
+    --font-body: "Geist", Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+    --r-xs: 3px;
+    --r-sm: 5px;
+    --r-md: 8px;
+
+    --artifact-pad: 20px;
+    --variant-border: 1px solid rgba(255,255,255,0.12);
+    --variant-shadow: 0 18px 48px rgba(0,0,0,0.32);
+    --variant-outline: rgba(184,162,125,0.34);
+  }
+
+  * { box-sizing: border-box; }
+
+  html { background: var(--black); }
+
+  body {
+    margin: 0;
+    color: var(--text);
+    background:
+      linear-gradient(145deg, rgba(184,162,125,0.05), transparent 32%),
+      repeating-linear-gradient(90deg, rgba(255,255,255,0.018) 0, rgba(255,255,255,0.018) 1px, transparent 1px, transparent 96px),
+      var(--black);
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  button,
+  input { font: inherit; }
+
+  .page {
+    width: calc(100% - 40px);
+    max-width: 1160px;
+    margin: 0 auto;
+    padding: 46px 0 88px;
+  }
+
+  header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 24px;
+    align-items: end;
+    margin-bottom: 24px;
+  }
+
+  header > *,
+  .toolbar,
+  .grid,
+  .snippet-panel {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .kicker,
+  .control-label,
+  .control-value,
+  .variant-label,
+  .meta,
+  .snippet-head,
+  pre {
+    font-family: var(--font-mono);
+    letter-spacing: 0;
+  }
+
+  .kicker {
+    color: var(--brass);
+    font-size: 11px;
+    text-transform: uppercase;
+    margin: 0 0 12px;
+  }
+
+  h1 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(36px, 5vw, 64px);
+    line-height: 1;
+    font-weight: 400;
+    letter-spacing: 0;
+    overflow-wrap: normal;
+    text-wrap: balance;
+  }
+
+  header p {
+    max-width: 720px;
+    margin: 18px 0 0;
+    color: var(--muted);
+    overflow-wrap: anywhere;
+    min-width: 0;
+  }
+
+  header code {
+    color: var(--paper);
+    background: rgba(255,255,255,0.055);
+    border: 1px solid var(--line);
+    border-radius: var(--r-xs);
+    padding: 1px 5px;
+    font-family: var(--font-mono);
+    font-size: 0.86em;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    white-space: normal;
+  }
+
+  .top-link {
+    color: var(--muted);
+    border: 1px solid var(--line);
+    border-radius: var(--r-sm);
+    padding: 8px 11px;
+    text-decoration: none;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+
+  .top-link:hover {
+    color: var(--text);
+    border-color: rgba(184,162,125,0.42);
+    background: rgba(184,162,125,0.08);
+  }
+
+  .toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 12;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 18px 28px;
+    padding: 14px 16px;
+    margin: 28px 0 34px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--r-md);
+    background: rgba(20,20,19,0.88);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 18px 44px rgba(0,0,0,0.24);
+    max-width: 100%;
+  }
+
+  .control {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .control-label {
+    color: var(--muted);
+    font-size: 12px;
+  }
+
+  .control-value {
+    color: var(--brass);
+    min-width: 40px;
+    font-size: 12px;
+  }
+
+  input[type="range"] {
+    appearance: none;
+    width: 150px;
+    height: 4px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.16);
+    outline: 0;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--brass);
+    border: 1px solid rgba(0,0,0,0.26);
+    cursor: pointer;
+  }
+
+  input[type="range"]::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border: 0;
+    border-radius: 50%;
+    background: var(--brass);
+    cursor: pointer;
+  }
+
+  .segmented {
+    display: inline-flex;
+    overflow: hidden;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--r-sm);
+  }
+
+  .segmented label {
+    display: inline-flex;
+    align-items: center;
+    min-height: 32px;
+    padding: 0 10px;
+    border-right: 1px solid var(--line);
+    color: var(--muted);
+    cursor: pointer;
+    user-select: none;
+    font-size: 13px;
+  }
+
+  .segmented label:last-child { border-right: 0; }
+  .segmented input { display: none; }
+  .segmented label.is-active {
+    color: var(--text);
+    background: rgba(184,162,125,0.11);
+  }
+
+  .check {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    color: var(--muted);
+    font-size: 13px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .check input {
+    appearance: none;
+    width: 17px;
+    height: 17px;
+    margin: 0;
+    border-radius: var(--r-xs);
+    border: 1px solid rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.035);
+    position: relative;
+  }
+
+  .check input:checked {
+    background: var(--brass);
+    border-color: var(--brass);
+  }
+
+  .check input:checked:after {
+    content: "";
+    position: absolute;
+    left: 5px;
+    top: 2px;
+    width: 5px;
+    height: 9px;
+    border: solid #15110c;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 26px;
+  }
+
+  .cell {
+    min-width: 0;
+  }
+
+  .variant-label {
+    display: inline-flex;
+    align-items: center;
+    min-height: 24px;
+    padding: 0 9px;
+    margin-bottom: 10px;
+    border-radius: 999px;
+    color: var(--brass);
+    background: rgba(184,162,125,0.08);
+    border: 1px solid rgba(184,162,125,0.18);
+    font-size: 11px;
+  }
+
+  .variant-note {
+    margin: 10px 0 0;
+    color: var(--muted);
+    font-size: 12px;
+  }
+
+  .artifact {
+    width: 100%;
+    min-width: 0;
+    min-height: 218px;
+    border-radius: var(--r-md);
+    padding: var(--artifact-pad);
+    border: var(--variant-border);
+    transition:
+      padding 160ms ease,
+      border-color 160ms ease,
+      background 160ms ease,
+      box-shadow 160ms ease,
+      transform 160ms ease;
+    cursor: pointer;
+    outline: 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .artifact:hover,
+  .artifact:focus-visible {
+    border-color: var(--variant-outline);
+    transform: translateY(-2px);
+  }
+
+  .artifact:focus-visible {
+    box-shadow: 0 0 0 3px rgba(184,162,125,0.16), var(--variant-shadow);
+  }
+
+  .artifact-head {
+    display: grid;
+    grid-template-columns: 42px minmax(0, 1fr);
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+
+  .medallion {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    border: 1px solid rgba(184,162,125,0.36);
+    color: var(--brass-hi);
+    background: rgba(184,162,125,0.075);
+    font-family: var(--font-mono);
+    font-size: 12px;
+  }
+
+  .artifact-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 1.22;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .artifact-sub {
+    margin: 3px 0 0;
+    color: var(--muted);
+    font-size: 13px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-bottom: 18px;
+  }
+
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    min-height: 22px;
+    padding: 0 8px;
+    border-radius: 999px;
+    color: var(--muted);
+    border: 1px solid rgba(255,255,255,0.09);
+    background: rgba(255,255,255,0.04);
+    font-size: 12px;
+  }
+
+  .tag.brass { color: #16120d; background: var(--brass); border-color: transparent; }
+  .tag.moss { color: #0d120c; background: var(--moss); border-color: transparent; }
+  .tag.blue { color: #0c1218; background: var(--blue); border-color: transparent; }
+  .tag.wine { color: #f6ece8; background: var(--wine); border-color: transparent; }
+
+  .ghost-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 32px;
+    padding: 0 11px;
+    border-radius: var(--r-sm);
+    border: 1px solid rgba(255,255,255,0.14);
+    color: var(--text);
+    background: rgba(255,255,255,0.035);
+    cursor: pointer;
+    font-size: 13px;
+  }
+
+  .ghost-btn:hover {
+    border-color: rgba(184,162,125,0.42);
+    background: rgba(184,162,125,0.08);
+  }
+
+  .annotation {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    color: var(--muted);
+    font-size: 12px;
+    opacity: 0;
+    max-height: 0;
+    transform: translateY(4px);
+    overflow: hidden;
+    transition: opacity 220ms ease, max-height 220ms ease, transform 220ms ease;
+  }
+
+  body.show-reveal .annotation,
+  .artifact:hover .annotation,
+  .artifact:focus-visible .annotation {
+    opacity: 1;
+    max-height: 80px;
+    transform: translateY(0);
+  }
+
+  .v-plaque {
+    background:
+      linear-gradient(145deg, rgba(255,255,255,0.035), rgba(255,255,255,0.012)),
+      var(--panel);
+  }
+
+  .v-smoked {
+    background: rgba(255,255,255,0.052);
+    backdrop-filter: blur(3px);
+    box-shadow: var(--variant-shadow);
+  }
+
+  .v-paper {
+    color: var(--paper-ink);
+    background:
+      linear-gradient(90deg, rgba(30,27,23,0.08) 1px, transparent 1px),
+      linear-gradient(0deg, rgba(30,27,23,0.08) 1px, transparent 1px),
+      var(--paper);
+    background-size: 28px 28px;
+    border-color: rgba(30,27,23,0.16);
+    transform: rotate(-0.7deg);
+  }
+
+  .v-paper:hover,
+  .v-paper:focus-visible { transform: rotate(0deg) translateY(-2px); }
+
+  .v-paper .artifact-sub,
+  .v-paper .annotation,
+  .v-paper .variant-note { color: rgba(30,27,23,0.68); }
+  .v-paper .tag { border-color: rgba(30,27,23,0.14); background: rgba(255,255,255,0.28); color: rgba(30,27,23,0.72); }
+  .v-paper .ghost-btn { border-color: rgba(30,27,23,0.18); background: rgba(30,27,23,0.04); color: var(--paper-ink); }
+  .v-paper .medallion { border-color: rgba(30,27,23,0.28); color: var(--paper-ink); background: rgba(30,27,23,0.055); }
+  .v-paper .annotation { border-top-color: rgba(30,27,23,0.14); }
+
+  .v-rail {
+    background: var(--panel);
+    padding-left: calc(var(--artifact-pad) + 10px);
+  }
+
+  .v-rail:before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 5px;
+    background: linear-gradient(180deg, var(--brass), rgba(184,162,125,0.14));
+  }
+
+  .v-ledger {
+    min-height: 104px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 12px;
+    align-items: center;
+    background:
+      linear-gradient(90deg, rgba(255,255,255,0.04), transparent),
+      var(--panel);
+  }
+
+  .v-ledger .artifact-head {
+    margin: 0;
+  }
+
+  .v-ledger .tags {
+    margin: 0;
+  }
+
+  .v-ledger .ghost-btn {
+    align-self: center;
+  }
+
+  .v-ledger .annotation {
+    grid-column: 1 / -1;
+    margin-top: 0;
+  }
+
+  .v-fold {
+    background:
+      linear-gradient(135deg, rgba(184,162,125,0.15), transparent 28%),
+      var(--panel-2);
+  }
+
+  .v-fold:after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    border-top: 38px solid rgba(215,207,191,0.12);
+    border-left: 38px solid transparent;
+  }
+
+  .snippet-panel {
+    margin-top: 40px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--r-md);
+    overflow: hidden;
+    background: rgba(0,0,0,0.24);
+  }
+
+  .snippet-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 14px;
+    color: var(--muted);
+    border-bottom: 1px solid var(--line);
+    background: rgba(255,255,255,0.035);
+    font-size: 12px;
+  }
+
+  pre {
+    margin: 0;
+    min-height: 138px;
+    overflow-x: auto;
+    padding: 18px;
+    color: var(--paper);
+    background: rgba(0,0,0,0.36);
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  @media (max-width: 980px) {
+    .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+
+  @media (max-width: 680px) {
+    body { overflow-x: hidden; }
+    .page { width: calc(100% - 28px); padding-top: 32px; }
+    header { grid-template-columns: 1fr; align-items: start; }
+    h1 {
+      font-size: 29px;
+      line-height: 1.08;
+      overflow-wrap: anywhere;
+    }
+    .top-link { width: max-content; }
+    .toolbar { position: static; align-items: stretch; }
+    .control { width: 100%; }
+    .control:first-child {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      width: 100%;
+    }
+    input[type="range"] { width: 100%; min-width: 0; }
+    .control:nth-child(2) {
+      display: grid;
+      grid-template-columns: 1fr;
+      align-items: stretch;
+    }
+    .segmented {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      width: 100%;
+    }
+    .segmented label {
+      justify-content: center;
+      min-width: 0;
+      padding: 0 6px;
+    }
+    .grid { grid-template-columns: 1fr; }
+    .v-ledger { grid-template-columns: 1fr; }
+    .v-ledger .ghost-btn { width: 100%; }
+  }
+</style>
+</head>
+<body>
+<main class="page">
+  <header>
+    <div>
+      <p class="kicker">Editorial visual design</p>
+      <h1>Component variant matrix</h1>
+      <p>Six structural treatments for an <code>&lt;Artifact /&gt;</code> or content panel. Adjust density and emphasis, then hover or focus a variant to preview the prop recipe.</p>
+    </div>
+    <a class="top-link" href="visual-system.html">Design system reference</a>
+  </header>
+
+  <div class="toolbar">
+    <div class="control">
+      <span class="control-label">Padding</span>
+      <input id="ctl-pad" type="range" min="14" max="34" value="20" step="2" aria-label="Artifact padding">
+      <span class="control-value" id="pad-out">20px</span>
+    </div>
+
+    <div class="control">
+      <span class="control-label">Border</span>
+      <div class="segmented" id="border-group" role="radiogroup" aria-label="Border treatment">
+        <label class="is-active"><input type="radio" name="border" value="whisper" checked><span>whisper</span></label>
+        <label><input type="radio" name="border" value="etched"><span>etched</span></label>
+        <label><input type="radio" name="border" value="brass"><span>brass</span></label>
+      </div>
+    </div>
+
+    <div class="control">
+      <label class="check">
+        <input id="ctl-reveal" type="checkbox">
+        Reveal annotations
+      </label>
+    </div>
+  </div>
+
+  <div class="grid" id="grid">
+    <div class="cell">
+      <span class="variant-label">A &middot; Etched plaque</span>
+      <div class="artifact v-plaque" tabindex="0"
+           data-snippet='<Artifact variant="plaque" density={PAD} border="BORDER">
+  <Artifact.Marker>03</Artifact.Marker>
+  <Artifact.Title>Verification machinery</Artifact.Title>
+  <Artifact.Tags tone="neutral" />
+  <Artifact.Action>Inspect</Artifact.Action>
+</Artifact>'>
+        <div class="artifact-head">
+          <div class="medallion">03</div>
+          <div>
+            <p class="artifact-title">Verification machinery</p>
+            <p class="artifact-sub">mathematics / proof / interfaces</p>
+          </div>
+        </div>
+        <div class="tags">
+          <span class="tag">Archive</span>
+          <span class="tag brass">Selected</span>
+        </div>
+        <button class="ghost-btn">Inspect</button>
+        <div class="annotation">Best for a quiet default panel with one authored object and no decorative flourish.</div>
+      </div>
+      <p class="variant-note">best for: default authored panels on charcoal</p>
+    </div>
+
+    <div class="cell">
+      <span class="variant-label">B &middot; Smoked glass</span>
+      <div class="artifact v-smoked" tabindex="0"
+           data-snippet='<Artifact variant="smoked" density={PAD} border="BORDER" blur={3}>
+  <Artifact.Marker>AI</Artifact.Marker>
+  <Artifact.Title>Agent memory trace</Artifact.Title>
+  <Artifact.Tags tone="system" />
+  <Artifact.Action>Open</Artifact.Action>
+</Artifact>'>
+        <div class="artifact-head">
+          <div class="medallion">AI</div>
+          <div>
+            <p class="artifact-title">Agent memory trace</p>
+            <p class="artifact-sub">systems / interface / recall</p>
+          </div>
+        </div>
+        <div class="tags">
+          <span class="tag blue">AI</span>
+          <span class="tag">Trace</span>
+        </div>
+        <button class="ghost-btn">Open</button>
+        <div class="annotation">Best when an overlay should feel material and smoky, not consumer glassmorphism.</div>
+      </div>
+      <p class="variant-note">best for: overlays, tool drawers, hover reveals</p>
+    </div>
+
+    <div class="cell">
+      <span class="variant-label">C &middot; Archival sheet</span>
+      <div class="artifact v-paper" tabindex="0"
+           data-snippet='<Artifact variant="paper" density={PAD} border="paper">
+  <Artifact.Marker>PX</Artifact.Marker>
+  <Artifact.Title>Philosophy and CS</Artifact.Title>
+  <Artifact.Tags tone="paper" />
+  <Artifact.Action>Read</Artifact.Action>
+</Artifact>'>
+        <div class="artifact-head">
+          <div class="medallion">PX</div>
+          <div>
+            <p class="artifact-title">Philosophy and CS</p>
+            <p class="artifact-sub">notes / diagrams / claims</p>
+          </div>
+        </div>
+        <div class="tags">
+          <span class="tag">Ledger</span>
+          <span class="tag">Annotated</span>
+        </div>
+        <button class="ghost-btn">Read</button>
+        <div class="annotation">Best for inserted evidence, notes, written work, or anything that should feel handled.</div>
+      </div>
+      <p class="variant-note">best for: documents, notes, selected evidence</p>
+    </div>
+
+    <div class="cell">
+      <span class="variant-label">D &middot; Medallion rail</span>
+      <div class="artifact v-rail" tabindex="0"
+           data-snippet='<Artifact variant="rail" density={PAD} border="BORDER" accent="brass">
+  <Artifact.Marker>ED</Artifact.Marker>
+  <Artifact.Title>Cross-domain map</Artifact.Title>
+  <Artifact.Tags tone="mixed" />
+  <Artifact.Action>Trace</Artifact.Action>
+</Artifact>'>
+        <div class="artifact-head">
+          <div class="medallion">ED</div>
+          <div>
+            <p class="artifact-title">Cross-domain map</p>
+            <p class="artifact-sub">research / design / systems</p>
+          </div>
+        </div>
+        <div class="tags">
+          <span class="tag moss">Systems</span>
+          <span class="tag wine">Theory</span>
+        </div>
+        <button class="ghost-btn">Trace</button>
+        <div class="annotation">Best when priority needs to be felt structurally without loud color blocks.</div>
+      </div>
+      <p class="variant-note">best for: priority artifacts, pinned ideas</p>
+    </div>
+
+    <div class="cell">
+      <span class="variant-label">E &middot; Ledger row</span>
+      <div class="artifact v-ledger" tabindex="0"
+           data-snippet='<Artifact variant="ledger" layout="row" density={PAD} border="BORDER">
+  <Artifact.Marker>17</Artifact.Marker>
+  <Artifact.Title>Market fit note</Artifact.Title>
+  <Artifact.Tags compact />
+  <Artifact.Action>View</Artifact.Action>
+</Artifact>'>
+        <div>
+          <div class="artifact-head">
+            <div class="medallion">17</div>
+            <div>
+              <p class="artifact-title">Market fit note</p>
+              <p class="artifact-sub">signal / decision / owner</p>
+            </div>
+          </div>
+          <div class="tags">
+            <span class="tag">Signal</span>
+            <span class="tag moss">Live</span>
+          </div>
+        </div>
+        <button class="ghost-btn">View</button>
+        <div class="annotation">Best for compact scan states, sidebars, or repeated records with minimal ceremony.</div>
+      </div>
+      <p class="variant-note">best for: dense lists and sidebars</p>
+    </div>
+
+    <div class="cell">
+      <span class="variant-label">F &middot; Annotation fold</span>
+      <div class="artifact v-fold" tabindex="0"
+           data-snippet='<Artifact variant="fold" density={PAD} border="BORDER" reveal="annotation">
+  <Artifact.Marker>Q</Artifact.Marker>
+  <Artifact.Title>Question under the claim</Artifact.Title>
+  <Artifact.Tags tone="inquiry" />
+  <Artifact.Action>Unfold</Artifact.Action>
+</Artifact>'>
+        <div class="artifact-head">
+          <div class="medallion">Q</div>
+          <div>
+            <p class="artifact-title">Question under the claim</p>
+            <p class="artifact-sub">inquiry / uncertainty / next move</p>
+          </div>
+        </div>
+        <div class="tags">
+          <span class="tag oxide">Inquiry</span>
+          <span class="tag">Hidden note</span>
+        </div>
+        <button class="ghost-btn">Unfold</button>
+        <div class="annotation">Best when the interaction should reveal structure and reward curiosity.</div>
+      </div>
+      <p class="variant-note">best for: discovery states and annotations</p>
+    </div>
+  </div>
+
+  <div class="snippet-panel">
+    <div class="snippet-head">
+      <span>JSX recipe</span>
+      <span id="snippet-meta">hover or focus a variant</span>
+    </div>
+    <pre id="snippet">// hover or focus an artifact to preview its props</pre>
+  </div>
+</main>
+
+<script>
+  (function () {
+    var root = document.documentElement;
+    var pad = document.getElementById("ctl-pad");
+    var padOut = document.getElementById("pad-out");
+    var reveal = document.getElementById("ctl-reveal");
+    var snippet = document.getElementById("snippet");
+    var snippetMeta = document.getElementById("snippet-meta");
+    var borderLabels = Array.prototype.slice.call(document.querySelectorAll(".segmented label"));
+    var currentBorder = "whisper";
+    var borderMap = {
+      whisper: "1px solid rgba(255,255,255,0.08)",
+      etched: "1px solid rgba(255,255,255,0.18)",
+      brass: "1px solid rgba(184,162,125,0.34)"
+    };
+    var outlineMap = {
+      whisper: "rgba(184,162,125,0.34)",
+      etched: "rgba(211,192,154,0.42)",
+      brass: "rgba(211,192,154,0.7)"
+    };
+
+    function applyPad() {
+      root.style.setProperty("--artifact-pad", pad.value + "px");
+      padOut.textContent = pad.value + "px";
+    }
+
+    function applyBorder(value) {
+      currentBorder = value;
+      root.style.setProperty("--variant-border", borderMap[value]);
+      root.style.setProperty("--variant-outline", outlineMap[value]);
+      borderLabels.forEach(function (label) {
+        var input = label.querySelector("input");
+        label.classList.toggle("is-active", input && input.value === value);
+      });
+    }
+
+    function applyReveal() {
+      document.body.classList.toggle("show-reveal", reveal.checked);
+    }
+
+    function showSnippet(card) {
+      var raw = card.getAttribute("data-snippet") || "";
+      snippet.textContent = raw
+        .replace(/PAD/g, pad.value)
+        .replace(/BORDER/g, currentBorder);
+      snippetMeta.textContent = card.closest(".cell").querySelector(".variant-label").textContent;
+    }
+
+    pad.addEventListener("input", applyPad);
+    reveal.addEventListener("change", applyReveal);
+
+    document.querySelectorAll("input[name='border']").forEach(function (input) {
+      input.addEventListener("change", function () {
+        applyBorder(input.value);
+      });
+    });
+
+    document.querySelectorAll(".artifact").forEach(function (card) {
+      card.addEventListener("mouseenter", function () { showSnippet(card); });
+      card.addEventListener("focusin", function () { showSnippet(card); });
+    });
+
+    applyPad();
+    applyBorder("whisper");
+    applyReveal();
+  })();
+</script>
+</body>
+</html>

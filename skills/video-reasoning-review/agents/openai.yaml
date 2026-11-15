@@ -1,0 +1,7 @@
+interface:
+  display_name: "Video Reasoning Review"
+  short_description: "Audit arguments with timed evidence"
+  default_prompt: "Use $video-reasoning-review to assess this video's reasoning and evidence with timestamps and a concise verdict."
+
+policy:
+  allow_implicit_invocation: true

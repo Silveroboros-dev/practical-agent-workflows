@@ -1,0 +1,4 @@
+interface:
+  display_name: "Evidence-Driven Development Cycle"
+  short_description: "Separate delivery, evidence, and acceptance"
+  default_prompt: "Use $evidence-driven-development-cycle to verify and report this multi-stage development work."

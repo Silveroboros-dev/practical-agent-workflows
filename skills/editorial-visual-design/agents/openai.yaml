@@ -1,0 +1,4 @@
+interface:
+  display_name: "Editorial Visual Design"
+  short_description: "Art-direct a restrained editorial-gallery style"
+  default_prompt: "Use $editorial-visual-design to critique this design and propose a restrained editorial-gallery direction."

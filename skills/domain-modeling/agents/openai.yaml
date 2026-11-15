@@ -1,0 +1,4 @@
+interface:
+  display_name: "Domain Modeling"
+  short_description: "Clarify project terms and design decisions"
+  default_prompt: "Use $domain-modeling to resolve conflicting domain terms and record consequential decisions."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Decision Questionnaire"
+  short_description: "Draft stakeholder questions tied to decisions"
+  default_prompt: "Use $to-questionnaire to draft stakeholder questions that resolve the information gaps for this decision."

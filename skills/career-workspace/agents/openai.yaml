@@ -1,0 +1,4 @@
+interface:
+  display_name: "Career Workspace"
+  short_description: "Organize CV sources, applications, and sent versions"
+  default_prompt: "Use $career-workspace to organize this CV folder and maintain my application records while preserving the original documents."

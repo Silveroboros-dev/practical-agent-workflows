@@ -1,0 +1,4 @@
+interface:
+  display_name: "Network Failure Diagnosis"
+  short_description: "Separate transport, data and process failures"
+  default_prompt: "Use $network-failure-diagnosis to identify the failed layer and prepare the smallest evidence-based next test."

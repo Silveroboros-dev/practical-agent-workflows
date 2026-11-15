@@ -1,0 +1,4 @@
+interface:
+  display_name: "Worker Allocation"
+  short_description: "Choose a worker for verified results"
+  default_prompt: "Use $worker-allocation to choose an available worker and effort for this delegated task, with a bounded handoff and verification plan."

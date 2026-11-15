@@ -1,0 +1,4 @@
+interface:
+  display_name: "Engineering Interview Coach"
+  short_description: "Build evidence-grounded engineering stories"
+  default_prompt: "Use $engineering-interview-coach to stress-test my interview answer, rewrite it within the supplied evidence, and prepare technical follow-ups."

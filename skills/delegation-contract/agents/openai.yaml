@@ -1,0 +1,4 @@
+interface:
+  display_name: "Delegation Contract"
+  short_description: "Interview for bounded AI work packets"
+  default_prompt: "Use $delegation-contract to turn my request into a bounded mission with authority, evidence, and stop conditions."

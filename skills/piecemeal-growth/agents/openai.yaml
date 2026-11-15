@@ -1,0 +1,4 @@
+interface:
+  display_name: "Piecemeal Growth"
+  short_description: "Choose the next useful product increment"
+  default_prompt: "Use $piecemeal-growth to choose the next useful increment from observed product feedback."

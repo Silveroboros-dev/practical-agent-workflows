@@ -1,0 +1,4 @@
+interface:
+  display_name: "Parallel Agent Coordination"
+  short_description: "Coordinate scoped branches and integration"
+  default_prompt: "Use $parallel-agent-coordination to coordinate multiple writers in this repository using its actual branch and review conventions."

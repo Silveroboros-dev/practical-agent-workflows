@@ -1,0 +1,4 @@
+interface:
+  display_name: "Eval UI Contract Builder"
+  short_description: "Spec-first UI for eval-heavy apps"
+  default_prompt: "Use $eval-ui-contract-builder to add or change an eval-heavy UI with a written contract and verification tests first."

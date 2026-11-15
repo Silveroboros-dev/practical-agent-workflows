@@ -1,0 +1,57 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "practical-agent-workflows",
+  "version": "0.1.0",
+  "description": "Practical skills for discovery, engineering judgment, delegation, evaluation, writing, design, and career preparation.",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "workflows",
+    "engineering",
+    "delegation",
+    "evaluation",
+    "writing"
+  ],
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "Practical Agent Workflows",
+        "shortDescription": "Better decisions, clearer work",
+        "longDescription": "Eighteen focused skills for practical discovery, engineering judgment, bounded delegation, evaluation governance, writing, design, and career preparation. Challenge unnecessary architecture, clarify domain terms, draft stakeholder questions, define work packets, coordinate repository changes, inspect evidence, and produce clear artifacts. Includes portable Markdown-to-HTML helpers and synthetic interview examples. Uses the tools and permissions already available in your host; no MCP server, app connection, or API key is bundled.",
+        "category": "Productivity",
+        "capabilities": [],
+        "defaultPrompt": [
+          "Challenge this architecture and suggest the cheapest useful validation.",
+          "Turn this task into a bounded mission with evidence and stop conditions.",
+          "Improve these agent instructions while preserving checks and permissions."
+        ],
+        "logo": "./assets/icon.png",
+        "composerIcon": "./assets/icon.png"
+      },
+      "review": {
+        "prompts": [
+          "Before adding three services, help us test whether one process would meet the requirement.",
+          "Clarify customer, account, and user for a subscription product where one payer manages several teams.",
+          "Draft questions for the operations lead that will help us choose a migration approach.",
+          "Prepare a work packet for reviewing this repository. Editing and remote operations are outside scope.",
+          "Review an evaluation design for evidence leakage, stale state, and unbounded external calls.",
+          "Improve the attached technology article introduction while preserving its thesis and causal logic.",
+          "Convert the supplied Markdown into readable dark and light HTML, preserving the source content.",
+          "Prepare an evidence-grounded architecture interview answer from these synthetic contribution notes."
+        ],
+        "commerce": false,
+        "commerce_description": "This skills-only package does not sell items, take orders, or process payments."
+      },
+      "publication": {
+        "countries": [],
+        "release_notes": "Initial public candidate with eighteen portable skills, generic references and examples, a directory icon, and Markdown reading-artifact helpers."
+      }
+    }
+  },
+  "author": {
+    "name": "Silveroboros-dev",
+    "url": "https://github.com/Silveroboros-dev"
+  },
+  "repository": "https://github.com/Silveroboros-dev/practical-agent-workflows",
+  "homepage": "https://github.com/Silveroboros-dev/practical-agent-workflows"
+}

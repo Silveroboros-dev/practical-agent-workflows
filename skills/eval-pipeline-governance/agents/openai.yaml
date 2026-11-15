@@ -1,0 +1,4 @@
+interface:
+  display_name: "Eval Pipeline Governance"
+  short_description: "Govern blind holdouts and live eval evidence"
+  default_prompt: "Use $eval-pipeline-governance to design or audit this evaluation pipeline and its evidence chain."

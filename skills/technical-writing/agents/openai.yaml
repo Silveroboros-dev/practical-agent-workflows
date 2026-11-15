@@ -1,0 +1,4 @@
+interface:
+  display_name: "Technical Writing"
+  short_description: "Polish a technology argument without changing its thesis"
+  default_prompt: "Use $technical-writing to improve this technology draft while preserving its central thesis, scale, and causal logic."
